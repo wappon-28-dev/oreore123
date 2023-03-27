@@ -9,6 +9,14 @@
   let inputElements: HTMLInputElement[] | undefined;
   let focusIndex: number = 0;
 
+  const getFirstNumberIndex = () => {
+    const firstNumber = name.match(/\d/);
+    if (firstNumber) {
+      return name.indexOf(firstNumber[0]);
+    }
+    return -1;
+  };
+
   onMount(() => {
     inputElements = Array.from(document.querySelectorAll("input"));
     if (needFocus) inputElements[focusIndex]?.focus();
@@ -92,12 +100,14 @@
           on:click={() => increment(index)}
           disabled={(numbers[index] ?? 0) >= 9}>▲</button
         >
+        <!-- svelte-ignore a11y-autofocus -->
         <input
           class="no-spin"
           type="number"
           bind:value={numbers[index]}
           on:input={(event) => focusNext(event, index)}
           tabindex={index}
+          autofocus={getFirstNumberIndex() === index}
         />
         <button
           on:click={() => decrement(index)}
