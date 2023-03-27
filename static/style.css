@@ -1,0 +1,20 @@
+@font-face {
+  font-family: "LINE Seed";
+  src: url("%sveltekit.assets%/fonts/LINESeedJP_OTF_Th.woff2");
+}
+@font-face {
+  font-family: "LINE Seed";
+  src: url("%sveltekit.assets%/fonts/LINESeedJP_OTF_Bd.woff2");
+}
+@font-face {
+  font-family: "LINE Seed";
+  src: url("%sveltekit.assets%/fonts/LINESeedJP_OTF_Eb.woff2");
+}
+@font-face {
+  font-family: "LINE Seed";
+  src: url("%sveltekit.assets%/fonts/LINESeedJP_OTF_Rg.woff2");
+}
+
+body {
+  font-family: "LINE Seed", sans-serif;
+}

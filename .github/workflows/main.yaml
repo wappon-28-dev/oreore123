@@ -1,0 +1,38 @@
+name: cloudflare
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ (github.ref == 'refs/heads/main' && 'production') || 'preview' }}
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+     - name: 🔨 Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+        with:
+          cache: true
+          cache-bin: true
+
+      - name: 🎉 Install project dependencies
+        run: bun i
+
+      - name: 🏗️ Generate static files
+        run: bun run build
+
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+            WORKING_DIRECTORY: "./build"
