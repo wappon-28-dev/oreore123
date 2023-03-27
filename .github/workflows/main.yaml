@@ -1,4 +1,4 @@
-name: cloudflare
+name: vercel
 
 on:
   push:
@@ -9,14 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ (github.ref == 'refs/heads/main' && 'production') || 'preview' }}
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v3
 
-     - name: 🔨 Setup Bun Runtime
+      - name: 🔨 Setup Bun Runtime
         uses: antongolub/action-setup-bun@v1
         with:
           cache: true
@@ -28,11 +26,17 @@ jobs:
       - name: 🏗️ Generate static files
         run: bun run build
 
-      - name: Deploy to Vercel Action
+      - name: 🔧 Copy configs to build directory
+        uses: canastro/copy-file-action@master
+        with:
+          source: "./vercel.json"
+          target: "./build/vercel.json"
+
+      - name: 🚀 Deploy to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-            WORKING_DIRECTORY: "./build"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          WORKING_DIRECTORY: "./build"
